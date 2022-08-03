@@ -36,7 +36,7 @@ class MediaPipeHandsMediaPipeDetector implements HandDetector {
   private height = 0;
   private hands: Hand[];
 
-  private selfieMode = false;
+  private selfieMode = true;
 
   // Should not be called outside.
   constructor(config: MediaPipeHandsMediaPipeModelConfig) {
