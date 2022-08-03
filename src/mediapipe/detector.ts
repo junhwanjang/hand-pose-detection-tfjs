@@ -17,12 +17,12 @@
 import * as hands from '@mediapipe/hands';
 import * as tf from '@tensorflow/tfjs-core';
 
-import {MEDIAPIPE_KEYPOINTS} from '../constants';
-import {HandDetector} from '../hand_detector';
-import {Hand, HandDetectorInput} from '../types';
+import { MEDIAPIPE_KEYPOINTS } from '../constants';
+import { HandDetector } from '../hand_detector';
+import { Hand, HandDetectorInput } from '../types';
 
-import {validateModelConfig} from './detector_utils';
-import {MediaPipeHandsMediaPipeEstimationConfig, MediaPipeHandsMediaPipeModelConfig} from './types';
+import { validateModelConfig } from './detector_utils';
+import { MediaPipeHandsMediaPipeEstimationConfig, MediaPipeHandsMediaPipeModelConfig } from './types';
 
 /**
  * MediaPipe detector class.
@@ -49,7 +49,7 @@ class MediaPipeHandsMediaPipeDetector implements HandDetector {
         return `${base}/${path}`;
       }
     });
-    let modelComplexity: 0|1;
+    let modelComplexity: 0 | 1;
     switch (config.modelType) {
       case 'lite':
         modelComplexity = 0;
@@ -85,23 +85,23 @@ class MediaPipeHandsMediaPipeDetector implements HandDetector {
   }
 
   private translateOutput(
-      landmarks: hands.NormalizedLandmarkList,
-      worldLandmarks: hands.LandmarkList) {
+    landmarks: hands.NormalizedLandmarkList,
+    worldLandmarks: hands.LandmarkList) {
     const keypoints = landmarks.map((landmark, i) => ({
-                                      x: landmark.x * this.width,
-                                      y: landmark.y * this.height,
-                                      z: landmark.z * this.width,
-                                      score: landmark.visibility,
-                                      name: MEDIAPIPE_KEYPOINTS[i],
-                                    }));
+      x: landmark.x * this.width,
+      y: landmark.y * this.height,
+      z: landmark.z * this.width,
+      score: landmark.visibility,
+      name: MEDIAPIPE_KEYPOINTS[i],
+    }));
     const keypoints3D = worldLandmarks.map((landmark, i) => ({
-                                             x: landmark.x,
-                                             y: landmark.y,
-                                             z: landmark.z,
-                                             score: landmark.visibility,
-                                             name: MEDIAPIPE_KEYPOINTS[i]
-                                           }));
-    return {keypoints, keypoints3D};
+      x: landmark.x,
+      y: landmark.y,
+      z: landmark.z,
+      score: landmark.visibility,
+      name: MEDIAPIPE_KEYPOINTS[i]
+    }));
+    return { keypoints, keypoints3D };
   }
 
   /**
@@ -125,11 +125,11 @@ class MediaPipeHandsMediaPipeDetector implements HandDetector {
    * @return An array of `Hand`s.
    */
   async estimateHands(
-      input: HandDetectorInput,
-      estimationConfig?: MediaPipeHandsMediaPipeEstimationConfig):
-      Promise<Hand[]> {
+    input: HandDetectorInput,
+    estimationConfig?: MediaPipeHandsMediaPipeEstimationConfig):
+    Promise<Hand[]> {
     if (estimationConfig && estimationConfig.flipHorizontal &&
-        (estimationConfig.flipHorizontal !== this.selfieMode)) {
+      (estimationConfig.flipHorizontal !== this.selfieMode)) {
       this.selfieMode = estimationConfig.flipHorizontal;
       this.handsSolution.setOptions({
         selfieMode: this.selfieMode,
@@ -137,10 +137,10 @@ class MediaPipeHandsMediaPipeDetector implements HandDetector {
     }
     // Cast to GL TexImageSource types.
     input = input instanceof tf.Tensor ?
-        new ImageData(
-            await tf.browser.toPixels(input), input.shape[1], input.shape[0]) :
-        input;
-    await this.handsSolution.send({image: input as hands.InputImage});
+      new ImageData(
+        await tf.browser.toPixels(input), input.shape[1], input.shape[0]) :
+      input;
+    await this.handsSolution.send({ image: input as hands.InputImage });
     return this.hands;
   }
 
@@ -170,7 +170,7 @@ class MediaPipeHandsMediaPipeDetector implements HandDetector {
  * interface.
  */
 export async function load(modelConfig: MediaPipeHandsMediaPipeModelConfig):
-    Promise<HandDetector> {
+  Promise<HandDetector> {
   const config = validateModelConfig(modelConfig);
   const detector = new MediaPipeHandsMediaPipeDetector(config);
   await detector.initialize();
